@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://the-american-chronicle-750858809775.us-west1.run.app/sitemap.xml

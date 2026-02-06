@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { generateHeroImage } from '../services/geminiService';
 import Button from './Button';
 import { RefreshCw, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { loadFromCache, saveToCache, CACHE_KEY_HERO } from '../utils/storage';
 
 interface HeroProps {
   apiKeyReady: boolean;
@@ -21,6 +22,9 @@ const Hero: React.FC<HeroProps> = ({ apiKeyReady }) => {
     try {
       const url = await generateHeroImage();
       setImageUrl(url);
+      if (url) {
+        saveToCache(CACHE_KEY_HERO, url);
+      }
       hasLoaded.current = true;
     } catch (err: any) {
       console.error(err);
@@ -31,8 +35,13 @@ const Hero: React.FC<HeroProps> = ({ apiKeyReady }) => {
   };
 
   useEffect(() => {
-    if (apiKeyReady && !hasLoaded.current) {
-      handleGenerate();
+    // Attempt load from cache
+    const cachedHero = loadFromCache<string>(CACHE_KEY_HERO);
+    if (cachedHero) {
+        setImageUrl(cachedHero);
+        hasLoaded.current = true;
+    } else if (apiKeyReady && !hasLoaded.current) {
+        handleGenerate();
     }
   }, [apiKeyReady]);
 

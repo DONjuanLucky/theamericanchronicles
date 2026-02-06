@@ -8,7 +8,8 @@ import Button from './components/Button';
 import { Category, ComicPanel } from './types';
 import { INITIAL_CATEGORIES } from './constants';
 import { generateComicScript, generateComicPanelImage } from './services/geminiService';
-import { Sparkles, Newspaper, RefreshCw } from 'lucide-react';
+import { Sparkles, Newspaper, RefreshCw, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { loadFromCache, saveToCache, CACHE_KEY_COMICS } from './utils/storage';
 
 const App: React.FC = () => {
   const [comics, setComics] = useState<ComicPanel[]>([]);
@@ -17,7 +18,7 @@ const App: React.FC = () => {
   const [apiKeyReady, setApiKeyReady] = useState(false);
   const hasInitialized = useRef(false);
 
-  // Initialize API Key state and auto-generate
+  // Initialize API Key state and check cache
   useEffect(() => {
     const init = async () => {
       let ready = false;
@@ -35,11 +36,30 @@ const App: React.FC = () => {
 
       if (ready && !hasInitialized.current) {
         hasInitialized.current = true;
-        handleGenerateWeeklyIssue();
+        
+        // Try to load from cache first
+        const cachedComics = loadFromCache<ComicPanel[]>(CACHE_KEY_COMICS);
+        if (cachedComics && cachedComics.length > 0) {
+          console.log("Loaded weekly issue from cache");
+          setComics(cachedComics);
+        } else {
+          // Only generate if no cache found
+          handleGenerateWeeklyIssue();
+        }
       }
     };
     init();
   }, []);
+
+  // Save to cache whenever comics are fully generated
+  useEffect(() => {
+    if (comics.length === INITIAL_CATEGORIES.length) {
+      const allComplete = comics.every(c => !c.isLoading);
+      if (allComplete) {
+        saveToCache(CACHE_KEY_COMICS, comics);
+      }
+    }
+  }, [comics]);
 
   const handleSelectKey = async () => {
     if (window.aistudio) {
@@ -49,7 +69,16 @@ const App: React.FC = () => {
         // If we just selected a key and haven't generated yet, do it now
         if (!hasInitialized.current) {
           hasInitialized.current = true;
-          handleGenerateWeeklyIssue();
+          // Note: Logic inside init() handles cache vs generation. 
+          // Since we are outside init, we replicate check or force gen?
+          // If user manually selects key, they likely want to see content.
+          // Check cache one more time for safety
+          const cachedComics = loadFromCache<ComicPanel[]>(CACHE_KEY_COMICS);
+          if (cachedComics && cachedComics.length > 0) {
+             setComics(cachedComics);
+          } else {
+             handleGenerateWeeklyIssue();
+          }
         }
       }
     }
@@ -117,7 +146,9 @@ const App: React.FC = () => {
   };
 
   const updateComicInState = (updatedComic: ComicPanel) => {
-    setComics(prev => prev.map(c => c.id === updatedComic.id ? updatedComic : c));
+    const newComics = comics.map(c => c.id === updatedComic.id ? updatedComic : c);
+    setComics(newComics);
+    // Note: The useEffect above will catch this change and update cache if strip details are added
   };
 
   const selectedComic = comics.find(c => c.id === selectedComicId);
@@ -128,13 +159,15 @@ const App: React.FC = () => {
       {/* Navbar */}
       <nav className="bg-yellow-400 border-b-4 border-black sticky top-0 z-40 shadow-md">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <div 
-            className="flex items-center gap-2 cursor-pointer group" 
-            onClick={() => setSelectedComicId(null)}
+          <a 
+            href="#"
+            className="flex items-center gap-2 cursor-pointer group decoration-0" 
+            onClick={(e) => { e.preventDefault(); setSelectedComicId(null); }}
+            title="Return to Home"
           >
             <Newspaper size={28} className="text-black group-hover:rotate-12 transition-transform" />
-            <span className="text-2xl font-bold tracking-tighter">THE AMERICAN CHRONICLE</span>
-          </div>
+            <h1 className="text-2xl font-bold tracking-tighter text-black">THE AMERICAN CHRONICLE</h1>
+          </a>
           <div className="flex gap-4">
              {!apiKeyReady && (
                <Button onClick={handleSelectKey} variant="danger" className="text-xs sm:text-sm">
@@ -157,7 +190,7 @@ const App: React.FC = () => {
 
       {/* Main View Switcher */}
       {selectedComic ? (
-         <main className="flex-1 container mx-auto px-4 py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+         <main role="main" className="flex-1 container mx-auto px-4 py-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
            <ComicDetailPage 
               comic={selectedComic} 
               onBack={() => setSelectedComicId(null)}
@@ -170,7 +203,7 @@ const App: React.FC = () => {
           <Hero apiKeyReady={apiKeyReady} />
 
           {/* Grid Content */}
-          <main className="flex-1 container mx-auto px-4 py-12">
+          <main role="main" className="flex-1 container mx-auto px-4 py-12">
             
             {/* Section Header */}
             <div className="flex items-end justify-between mb-8 border-b-4 border-black pb-4">
@@ -222,13 +255,40 @@ const App: React.FC = () => {
       <Newsletter />
 
       {/* Footer */}
-      <footer className="bg-black text-white py-12 border-t-8 border-yellow-400">
-        <div className="container mx-auto px-4 flex flex-col items-center">
-          <h3 className="font-bangers text-4xl mb-4 text-yellow-400 tracking-wider">THE AMERICAN CHRONICLE</h3>
-          <p className="text-gray-600 text-xs text-center">
-            © {new Date().getFullYear()} AI Satire Corp. All rights reserved. <br/>
-            No humans were harmed in the making of these comics.
-          </p>
+      <footer role="contentinfo" className="bg-black text-white py-12 border-t-8 border-yellow-400">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-8">
+          
+          <div className="text-center md:text-left">
+            <h3 className="font-bangers text-4xl mb-2 text-yellow-400 tracking-wider">THE AMERICAN CHRONICLE</h3>
+            <p className="text-gray-400 text-sm">
+              Est. 2024 • Truth, Justice, and Pixels.
+            </p>
+          </div>
+
+          <div className="flex gap-6">
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="text-white hover:text-yellow-400 transition-colors">
+              <Twitter size={24} />
+            </a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-white hover:text-yellow-400 transition-colors">
+              <Facebook size={24} />
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-white hover:text-yellow-400 transition-colors">
+              <Instagram size={24} />
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-white hover:text-yellow-400 transition-colors">
+              <Linkedin size={24} />
+            </a>
+          </div>
+
+          <div className="text-center md:text-right text-xs text-gray-500">
+            <p>© {new Date().getFullYear()} AI Satire Corp.</p>
+            <p className="mt-1">All rights reserved.</p>
+            <div className="flex gap-2 justify-center md:justify-end mt-2">
+                <a href="#" className="hover:text-white">Privacy</a>
+                <span>•</span>
+                <a href="#" className="hover:text-white">Terms</a>
+            </div>
+          </div>
         </div>
       </footer>
 
