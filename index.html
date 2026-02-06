@@ -4,13 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The American Chronicle - Satirical Comic News Aggregator</title>
-    <meta name="description" content="The American Chronicle is a daily satirical comic strip newspaper covering Politics, Technology, Sports, and Current Events. Featuring AI-generated art and real-world resource links.">
-    <meta name="keywords" content="comic news, political satire, ai art, daily news, american chronicle, editorial cartoons">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="The American Chronicle is a daily satirical comic strip newspaper covering Politics, Technology, Sports, and Current Events. We use AI to generate editorial cartoons and provide real-world resource links for deep dives into current affairs.">
+    <meta name="keywords" content="comic news, political satire, ai art, daily news, american chronicle, editorial cartoons, technology news comics, sports satire">
     <meta name="author" content="The American Chronicle">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://the-american-chronicle-750858809775.us-west1.run.app/" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://the-american-chronicle-750858809775.us-west1.run.app/">
+    <meta property="og:title" content="The American Chronicle - Satirical Comic News">
+    <meta property="og:description" content="Daily AI-generated comic strips covering the latest in politics, tech, and sports. Truth, Justice, and Pixels.">
+    <meta property="og:image" content="https://via.placeholder.com/1200x630.png?text=The+American+Chronicle">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="The American Chronicle">
+    <meta name="twitter:description" content="Satirical news in comic strip form.">
     
     <!-- Favicon & Icons -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📰</text></svg>">
-    <link rel="apple-touch-icon" href="https://via.placeholder.com/180x180.png?text=Chronicle">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -28,60 +45,78 @@
       .comic-border {
         border: 3px solid black;
       }
-      
-      /* Subtle Animations */
-      @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-5px); }
-      }
-      .animate-float {
-        animation: float 4s ease-in-out infinite;
-      }
-
-      @keyframes slideUpFade {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .animate-slide-up {
-        animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      }
-
-      @keyframes paperTexture {
-        0% { background-position: 0 0; }
-        100% { background-position: 100% 100%; }
-      }
-      
-      .hover-lift {
-        transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
-      }
-      .hover-lift:hover {
-        transform: translateY(-4px);
-        box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+      /* Fallback styles for SEO content */
+      #seo-content {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        font-family: sans-serif;
       }
     </style>
   <script type="importmap">
 {
   "imports": {
-    "@google/genai": "https://esm.sh/@google/genai@^1.40.0",
+    "react": "https://esm.sh/react@^19.2.4",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
     "react/": "https://esm.sh/react@^19.2.4/",
-    "react": "https://esm.sh/react@^19.2.4"
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.40.0"
   }
 }
 </script>
 </head>
   <body>
     <div id="root">
-      <!-- SEO Fallback Content for non-JS crawlers -->
-      <header>
-        <h1>The American Chronicle</h1>
-        <p>Your daily source for illustrated news, political satire, and current events.</p>
-      </header>
-      <main>
-        <h2>Latest Headlines</h2>
-        <p>Loading the latest comic strips...</p>
-      </main>
+      <!-- SEO FALLBACK CONTENT START -->
+      <!-- This content is visible to crawlers but replaced by React on hydration -->
+      <div id="seo-content">
+        <header>
+          <h1>The American Chronicle</h1>
+          <p><strong>Your Daily Source for Illustrated News, Political Satire, and Current Events.</strong></p>
+        </header>
+        
+        <main>
+          <article>
+            <h2>About The American Chronicle</h2>
+            <p>
+              The American Chronicle is an innovative digital newspaper that transforms standard headlines into engaging, satirical comic strips. 
+              By leveraging advanced Artificial Intelligence, including the Gemini API, we generate daily editorial cartoons covering 
+              <strong>Politics</strong>, <strong>Technology</strong>, <strong>Sports</strong>, and <strong>Current Events</strong>.
+            </p>
+            <p>
+              In a world of information overload, text-based news can be exhausting. Our mission is to inform the public through visual storytelling 
+              and humor. Each comic strip is fact-checked against real-world sources and includes links to verified government programs, 
+              non-profits, and primary source documents (like vote.gov, the EPA, or C-SPAN) to ensure our readers are not just entertained, 
+              but educated.
+            </p>
+            <p>
+              Whether it is the latest legislative bill in Congress, a new AI breakthrough in Silicon Valley, or the championship game highlights, 
+              The American Chronicle delivers the news with a punchline. We stand for Truth, Justice, and Pixels.
+            </p>
+          </article>
+          
+          <nav aria-label="Site Sections">
+            <h2>News Sections</h2>
+            <ul>
+              <li><a href="/politics">Political News & Satire</a></li>
+              <li><a href="/technology">Technology & AI News</a></li>
+              <li><a href="/sports">Sports Commentary</a></li>
+              <li><a href="/archive">Comic Archive</a></li>
+            </ul>
+          </nav>
+        </main>
+        
+        <footer>
+          <h2>Legal & Contact</h2>
+          <ul>
+            <li><a href="/privacy-policy">Privacy Policy</a></li>
+            <li><a href="/terms-of-service">Terms of Service</a></li>
+            <li><a href="/contact">Contact The Editor</a></li>
+          </ul>
+          <p>&copy; 2025 The American Chronicle. All rights reserved.</p>
+        </footer>
+      </div>
+      <!-- SEO FALLBACK CONTENT END -->
     </div>
   </body>
 </html>
